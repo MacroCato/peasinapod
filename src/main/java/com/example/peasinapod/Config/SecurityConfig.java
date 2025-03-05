@@ -32,10 +32,15 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 )
                 .authorizeHttpRequests((auth) ->
-                        //authorize.anyRequest().authenticated()
-                        auth.requestMatchers(HttpMethod.GET, "/public_resource").permitAll()
-                                .requestMatchers("/api/auth/**").permitAll()
+                        auth.requestMatchers(HttpMethod.GET, "/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/**").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/likes").permitAll()
+                                // .requestMatchers(HttpMethod.POST, "/api/likes/**").authenticated()
                                 .anyRequest().authenticated()
+                        // auth.requestMatchers(HttpMethod.GET, "/public_resource").permitAll()
+                        //        .requestMatchers("/api/auth/**").permitAll()
+                        //        .requestMatchers("/api/profiles").permitAll()
+                        //        .anyRequest().authenticated()
 
                 )
 //                .logout(logout -> logout
