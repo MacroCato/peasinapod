@@ -1,6 +1,6 @@
 package com.example.peasinapod.DTO;
 
-public class LikeData {
+public class LikeRequest {
     private Long userId;
     private Long profileId;
 

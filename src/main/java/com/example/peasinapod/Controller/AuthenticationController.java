@@ -67,7 +67,8 @@ public class AuthenticationController {
 
         // create user object
         User user = new User();
-        user.setName(signupRequest.getName());
+        user.setFirstName(signupRequest.getFirstName());
+        user.setSurname(signupRequest.getSurname());
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 

@@ -2,6 +2,8 @@ package com.example.peasinapod.Service;
 
 import com.example.peasinapod.Common.Profile;
 import com.example.peasinapod.Repository.ProfileRepository;
+//import com.example.peasinapod.Repository.CustomProfileRepository;
+//import com.example.peasinapod.Mock.MockProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    // private CustomProfileRepository mockProfileRepository = new MockProfileRepository();
+
     public Profile saveProfile(Profile profile) {
         // Business logic: Ensure the email is unique
         if (profileRepository.findByEmail(profile.getEmail()).isPresent()) {
@@ -26,6 +30,7 @@ public class ProfileService {
 
     public List<Profile> getAllProfiles() {
         return profileRepository.findAll();
+        // return mockProfileRepository.getAll();
     }
 
     public Profile getProfileById(Long id) {
@@ -49,5 +54,9 @@ public class ProfileService {
     // Delete a profile by ID
     public void deleteProfile(Long id) {
         profileRepository.deleteById(id);
+    }
+
+    public List<Profile> getAllProfilesExceptUser(Long userId) {
+        return profileRepository.findAllProfilesExcept(userId);
     }
 }

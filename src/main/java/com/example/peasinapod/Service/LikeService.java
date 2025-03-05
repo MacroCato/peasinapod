@@ -6,6 +6,8 @@ import com.example.peasinapod.Common.User;
 import com.example.peasinapod.Repository.LikeRepository;
 import com.example.peasinapod.Repository.ProfileRepository;
 import com.example.peasinapod.Repository.UserRepository;
+import com.example.peasinapod.DTO.ProfileDTO;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -50,7 +52,7 @@ public class LikeService {
         return savedLike;
     }
 
-    public List<Like> getLikesByUser(Long userId) {
+    public List<ProfileDTO> getLikesByUser(Long userId) {
         logger.debug("LikeService: Fetching likes for user. UserId: {}", userId);
 
         User user = userRepository.findById(userId).orElseThrow(() -> {
@@ -58,6 +60,15 @@ public class LikeService {
             return new IllegalArgumentException("User not found");
         });
 
-        return likeRepository.findByUser(user);
+        List<Like> likes = likeRepository.findByUser(user);
+        return likes.stream()
+                    .map(like -> {
+                        Profile profile = like.getProfile();
+                        ProfileDTO profileDTO = new ProfileDTO();
+                        profileDTO.setId(profile.getId());
+                        profileDTO.setNickname(profile.getNickname());
+                        return profileDTO;
+                    })
+                    .collect(Collectors.toList());
     }
 }

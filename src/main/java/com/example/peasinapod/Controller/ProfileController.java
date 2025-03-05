@@ -50,6 +50,17 @@ public class ProfileController {
         }
     }
 
+    // Get a list of all user profiles except the specified user
+    @GetMapping("/except/{userId}")
+    public ResponseEntity<List<Profile>> getAllProfilesExceptUser(@PathVariable Long userId) {
+        try {
+            List<Profile> profiles = profileService.getAllProfilesExceptUser(userId);
+            return new ResponseEntity<>(profiles, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     // Update an existing user profile
     @PutMapping("/{id}")
     public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile updatedProfile) {

@@ -2,7 +2,8 @@ package com.example.peasinapod.Controller;
 
 import com.example.peasinapod.Common.Like;
 import com.example.peasinapod.Service.LikeService;
-import com.example.peasinapod.DTO.LikeData;
+import com.example.peasinapod.DTO.LikeRequest;
+import com.example.peasinapod.DTO.ProfileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,10 +25,10 @@ public class LikeController {
     private static final Logger logger = LoggerFactory.getLogger(LikeService.class);
 
     @PostMapping
-    public ResponseEntity<Like> likeProfile(@RequestBody LikeData likeData) {
+    public ResponseEntity<Like> likeProfile(@RequestBody LikeRequest likeRequest) {
         try {
             logger.debug("LikeController: Attempting to like profile.");
-            Like like = likeService.likeProfile(likeData.getUserId(), likeData.getProfileId());
+            Like like = likeService.likeProfile(likeRequest.getUserId(), likeRequest.getProfileId());
             return new ResponseEntity<>(like, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -35,9 +36,9 @@ public class LikeController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Like>> getLikesByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<ProfileDTO>> getLikesByUser(@PathVariable Long userId) {
         try {
-            List<Like> likes = likeService.getLikesByUser(userId);
+            List<ProfileDTO> likes = likeService.getLikesByUser(userId);
             return new ResponseEntity<>(likes, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
