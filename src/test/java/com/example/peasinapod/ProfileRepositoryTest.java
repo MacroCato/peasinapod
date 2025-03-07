@@ -1,6 +1,6 @@
 package com.example.peasinapod;
 
-import com.example.peasinapod.Common.Profile;
+import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Repository.ProfileRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

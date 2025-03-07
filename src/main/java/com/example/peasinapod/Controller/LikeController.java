@@ -1,9 +1,9 @@
 package com.example.peasinapod.Controller;
 
-import com.example.peasinapod.Common.Like;
+import com.example.peasinapod.Data.Common.Like;
 import com.example.peasinapod.Service.LikeService;
-import com.example.peasinapod.DTO.LikeRequest;
-import com.example.peasinapod.DTO.ProfileDTO;
+import com.example.peasinapod.Data.DTO.LikeRequest;
+import com.example.peasinapod.Data.DTO.ProfileDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +25,7 @@ public class LikeController {
     private static final Logger logger = LoggerFactory.getLogger(LikeService.class);
 
     @PostMapping
+    @CrossOrigin
     public ResponseEntity<Like> likeProfile(@RequestBody LikeRequest likeRequest) {
         try {
             logger.debug("LikeController: Attempting to like profile.");

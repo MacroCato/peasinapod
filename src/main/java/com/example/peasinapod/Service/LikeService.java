@@ -1,12 +1,12 @@
 package com.example.peasinapod.Service;
 
-import com.example.peasinapod.Common.Like;
-import com.example.peasinapod.Common.Profile;
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.Common.Like;
+import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.LikeRepository;
 import com.example.peasinapod.Repository.ProfileRepository;
 import com.example.peasinapod.Repository.UserRepository;
-import com.example.peasinapod.DTO.ProfileDTO;
+import com.example.peasinapod.Data.DTO.ProfileDTO;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,6 +67,7 @@ public class LikeService {
                         ProfileDTO profileDTO = new ProfileDTO();
                         profileDTO.setId(profile.getId());
                         profileDTO.setNickname(profile.getNickname());
+                        profileDTO.setSummary(profile.getSummary());
                         return profileDTO;
                     })
                     .collect(Collectors.toList());

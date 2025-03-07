@@ -25,6 +25,8 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
+                .cors().and()
+                .httpBasic().disable()
                 .csrf(AbstractHttpConfigurer::disable)
                 .exceptionHandling(exceptionHandling ->
                                 exceptionHandling
@@ -34,7 +36,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests((auth) ->
                         auth.requestMatchers(HttpMethod.GET, "/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/api/likes").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/api/likes/**").permitAll()
+                                .requestMatchers(HttpMethod.PUT, "/api/profiles/**").permitAll()
                                 // .requestMatchers(HttpMethod.POST, "/api/likes/**").authenticated()
                                 .anyRequest().authenticated()
                         // auth.requestMatchers(HttpMethod.GET, "/public_resource").permitAll()

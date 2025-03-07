@@ -1,9 +1,9 @@
 package com.example.peasinapod.Controller;
 
-import com.example.peasinapod.DTO.LoginRequest;
-import com.example.peasinapod.DTO.SignupRequest;
-import com.example.peasinapod.Common.Role;
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.DTO.LoginRequest;
+import com.example.peasinapod.Data.DTO.SignupRequest;
+import com.example.peasinapod.Data.Common.Role;
+import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.RoleRepository;
 import com.example.peasinapod.Repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;

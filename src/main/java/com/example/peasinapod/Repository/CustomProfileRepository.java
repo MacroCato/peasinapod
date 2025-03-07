@@ -1,6 +1,6 @@
 package com.example.peasinapod.Repository;
 
-import com.example.peasinapod.Common.Profile;
+import com.example.peasinapod.Data.Common.Profile;
 import java.util.List;
 import java.util.Optional;
 

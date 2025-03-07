@@ -1,7 +1,7 @@
-package com.example.peasinapod.DTO;
+package com.example.peasinapod.Data.DTO;
 
 import lombok.*;
-import com.example.peasinapod.DTO.ProfileDTO;
+import com.example.peasinapod.Data.DTO.ProfileDTO;
 import java.util.List;
 
 @Data

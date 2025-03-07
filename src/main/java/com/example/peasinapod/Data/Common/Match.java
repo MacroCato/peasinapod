@@ -1,14 +1,14 @@
-package com.example.peasinapod.Common;
+package com.example.peasinapod.Data.Common;
 
-import com.example.peasinapod.Common.Profile;
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.Common.User;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "rejects")
+@Table(name = "matches")
 @Data
-public class Reject {
+public class Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

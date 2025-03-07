@@ -2,7 +2,8 @@ package com.example.peasinapod.Controller;
 
 import java.util.List;
 
-import com.example.peasinapod.Common.Profile;
+import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Service.ProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,13 +35,24 @@ public class ProfileController {
 
     // Get a list of all user profiles
     @GetMapping
-    public ResponseEntity<List<Profile>> getAllProfiles() {
-        List<Profile> profiles = profileService.getAllProfiles();
+    public ResponseEntity<List<ProfileDTO>> getAllProfiles() {
+        List<ProfileDTO> profiles = profileService.getAllProfiles();
         return new ResponseEntity<>(profiles, HttpStatus.OK);
     }
     
     // Get a specific user profile by ID
     @GetMapping("/{id}")
+    public ResponseEntity<ProfileDTO> getProfileDTOById(@PathVariable Long id) {
+        ProfileDTO profileDTO = profileService.getProfileDTOById(id);
+        if (profileDTO != null) {
+            return new ResponseEntity<>(profileDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Get a specific user profile by ID
+    @GetMapping("/user/{id}")
     public ResponseEntity<Profile> getProfileById(@PathVariable Long id) {
         Profile profile = profileService.getProfileById(id);
         if (profile != null) {
@@ -52,10 +64,10 @@ public class ProfileController {
 
     // Get a list of all user profiles except the specified user
     @GetMapping("/except/{userId}")
-    public ResponseEntity<List<Profile>> getAllProfilesExceptUser(@PathVariable Long userId) {
+    public ResponseEntity<List<ProfileDTO>> getAllProfilesExceptUser(@PathVariable Long userId) {
         try {
-            List<Profile> profiles = profileService.getAllProfilesExceptUser(userId);
-            return new ResponseEntity<>(profiles, HttpStatus.OK);
+            List<ProfileDTO> profilesDTO = profileService.getAllProfilesExceptUser(userId);
+            return new ResponseEntity<>(profilesDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

@@ -1,4 +1,4 @@
-package com.example.peasinapod.Common;
+package com.example.peasinapod.Data.Common;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -21,6 +21,7 @@ public class Profile {
     private String surname;
     private String nickname;
     private String email;
+    private String summary;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -64,6 +65,14 @@ public class Profile {
 
     public void setNickname(String nickname) {
         this.nickname = nickname;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 
 }

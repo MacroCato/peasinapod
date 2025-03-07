@@ -1,6 +1,6 @@
 package com.example.peasinapod.Service;
 
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

@@ -1,6 +1,6 @@
 package com.example.peasinapod.Repository;
 
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.Common.User;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

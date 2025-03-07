@@ -1,7 +1,7 @@
-package com.example.peasinapod.Common;
+package com.example.peasinapod.Data.Common;
 
-import com.example.peasinapod.Common.Profile;
-import com.example.peasinapod.Common.User;
+import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.Common.User;
 import jakarta.persistence.*;
 import lombok.*;
 

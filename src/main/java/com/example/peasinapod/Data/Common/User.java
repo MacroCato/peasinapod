@@ -1,4 +1,4 @@
-package com.example.peasinapod.Common;
+package com.example.peasinapod.Data.Common;
 
 import jakarta.persistence.*;
 import lombok.*;

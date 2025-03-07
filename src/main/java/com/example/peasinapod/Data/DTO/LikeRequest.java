@@ -1,4 +1,4 @@
-package com.example.peasinapod.DTO;
+package com.example.peasinapod.Data.DTO;
 
 public class LikeRequest {
     private Long userId;

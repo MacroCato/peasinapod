@@ -1,6 +1,6 @@
 package com.example.peasinapod.Repository;
 
-import com.example.peasinapod.Common.Profile;
+import com.example.peasinapod.Data.Common.Profile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
