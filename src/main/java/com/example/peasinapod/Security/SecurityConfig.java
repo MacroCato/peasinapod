@@ -23,6 +23,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.http.HttpMethod;
 import com.example.peasinapod.Security.JwtAuthenticationFilter;
 import com.example.peasinapod.Service.CustomUserDetailsService;
+import com.example.peasinapod.Security.RestAuthenticationEntryPoint;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 // import org.springframework.web.filter.CorsFilter;
@@ -57,6 +58,10 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable()) // Disable CSRF
+            .exceptionHandling(exceptionHandling ->
+                                exceptionHandling
+                                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+               )
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
