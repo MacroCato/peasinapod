@@ -5,10 +5,12 @@ import java.util.List;
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Service.ProfileService;
+import com.example.peasinapod.Security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
 
 // This is the controller class for the Profile entity. This 
 // is the entry point for the clients via the REST API.
@@ -21,6 +23,9 @@ public class ProfileController {
     // Inject the ProfileService class
     @Autowired
     private ProfileService profileService;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     // Create a new user profile
     @PostMapping
@@ -38,6 +43,14 @@ public class ProfileController {
     public ResponseEntity<List<ProfileDTO>> getAllProfiles() {
         List<ProfileDTO> profiles = profileService.getAllProfiles();
         return new ResponseEntity<>(profiles, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ProfileDTO> getProfile(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7); // Remove "Bearer " prefix
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        ProfileDTO profile = profileService.getProfileDTOByUserId(userId);
+        return new ResponseEntity<>(profile, HttpStatus.OK);
     }
     
     // Get a specific user profile by ID

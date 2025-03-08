@@ -15,6 +15,7 @@ import java.util.List;
 @Repository
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Optional<Profile> findByEmail(String email);
+    Optional<Profile> findByUserId(Long userId);
 
     @Query("SELECT p FROM Profile p WHERE p.id <> :userId")
     List<Profile> findAllProfilesExcept(@Param("userId") Long userId);

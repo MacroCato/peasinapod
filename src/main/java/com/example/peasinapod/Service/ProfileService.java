@@ -3,6 +3,7 @@ package com.example.peasinapod.Service;
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Repository.ProfileRepository;
+import com.example.peasinapod.Security.JwtTokenUtil;
 //import com.example.peasinapod.Repository.CustomProfileRepository;
 //import com.example.peasinapod.Mock.MockProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,19 @@ public class ProfileService {
 
     public ProfileDTO getProfileDTOById(Long id) {
         Profile profile = profileRepository.findById(id).orElse(null);
+        if (profile != null) {
+            ProfileDTO profileDTO = new ProfileDTO();
+            profileDTO.setId(profile.getId());
+            profileDTO.setNickname(profile.getNickname());
+            profileDTO.setSummary(profile.getSummary());
+            return profileDTO;
+        } else {
+            return null;
+        }
+    }
+
+    public ProfileDTO getProfileDTOByUserId(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId).orElse(null);
         if (profile != null) {
             ProfileDTO profileDTO = new ProfileDTO();
             profileDTO.setId(profile.getId());

@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtTokenUtil {
@@ -34,9 +36,12 @@ public class JwtTokenUtil {
         }
     }
 
-    public String generateToken(String email) {
+    public String generateToken(String email, Long userId) {
         logger.info("Generating token for email: {}", email);
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", userId);
         String token = Jwts.builder()
+                .setClaims(claims)
                 .setSubject(email)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
@@ -55,6 +60,17 @@ public class JwtTokenUtil {
         String email = claims.getSubject();
         logger.info("Email extracted: {}", email);
         return claims.getSubject();
+    }
+
+    public Long getUserIdFromToken(String token) {
+        logger.info("Extracting user ID from token: {}", token);
+        Claims claims = Jwts.parser()
+                .setSigningKey(secret)
+                .parseClaimsJws(token)
+                .getBody();
+        Long userId = claims.get("userId", Long.class);
+        logger.info("User ID extracted: {}", userId);
+        return userId;
     }
 
     public boolean validateToken(String token) {

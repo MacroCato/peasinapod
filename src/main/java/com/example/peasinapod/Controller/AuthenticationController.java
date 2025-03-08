@@ -1,6 +1,7 @@
 package com.example.peasinapod.Controller;
 
 import com.example.peasinapod.Data.DTO.LoginRequest;
+import com.example.peasinapod.Data.DTO.LoginResponse;
 import com.example.peasinapod.Data.DTO.SignupRequest;
 import com.example.peasinapod.Data.Common.Role;
 import com.example.peasinapod.Data.Common.User;
@@ -46,15 +47,19 @@ public class AuthenticationController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request){
+    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request) {
         Authentication authenticationRequest =
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
         Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
-        String token = jwtTokenUtil.generateToken(loginRequest.getEmail());
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        User user = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        String token = jwtTokenUtil.generateToken(loginRequest.getEmail(), user.getId());
+        LoginResponse loginResponse = new LoginResponse(token, user.getId());
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
     }
 
     @PostMapping("/signup")
