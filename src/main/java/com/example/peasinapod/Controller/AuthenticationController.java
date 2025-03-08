@@ -6,6 +6,7 @@ import com.example.peasinapod.Data.Common.Role;
 import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.RoleRepository;
 import com.example.peasinapod.Repository.UserRepository;
+import com.example.peasinapod.Security.JwtTokenUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ import java.util.Set;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AuthenticationController {
 
     @Autowired
@@ -39,22 +41,21 @@ public class AuthenticationController {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest, HttpServletRequest request){
         Authentication authenticationRequest =
-                UsernamePasswordAuthenticationToken.unauthenticated(loginRequest.getEmail(), loginRequest.getPassword());
-        Authentication authenticationResponse = this.authenticationManager.authenticate(authenticationRequest);
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+        Authentication authenticationResponse = authenticationManager.authenticate(authenticationRequest);
 
         SecurityContextHolder.getContext().setAuthentication(authenticationResponse);
 
-        HttpSession session = request.getSession();
-        session.setAttribute("SPRING_SECURITY_CONTEXT", SecurityContextHolder.getContext());
-        return new ResponseEntity<>("User signed-in successfully!.", HttpStatus.OK);
+        String token = jwtTokenUtil.generateToken(loginRequest.getEmail());
+        return new ResponseEntity<>(token, HttpStatus.OK);
     }
-//    https://docs.spring.io/spring-security/reference/servlet/authentication/passwords/index.html#servlet-authentication-unpwd-input
-
-
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest, HttpServletRequest request){
@@ -63,7 +64,6 @@ public class AuthenticationController {
         if(userRepository.existsByEmail(signupRequest.getEmail())){
             return new ResponseEntity<>("Email already used!", HttpStatus.BAD_REQUEST);
         }
-
 
         // create user object
         User user = new User();

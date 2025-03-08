@@ -22,13 +22,13 @@ public class LikeController {
     @Autowired
     private LikeService likeService;
 
-    private static final Logger logger = LoggerFactory.getLogger(LikeService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LikeController.class);
 
     @PostMapping
     @CrossOrigin
     public ResponseEntity<Like> likeProfile(@RequestBody LikeRequest likeRequest) {
         try {
-            logger.debug("LikeController: Attempting to like profile.");
+            logger.debug("LikeController: Attempting to like profile with userId: {} and profileId: {}", likeRequest.getUserId(), likeRequest.getProfileId());
             Like like = likeService.likeProfile(likeRequest.getUserId(), likeRequest.getProfileId());
             return new ResponseEntity<>(like, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
