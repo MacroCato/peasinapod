@@ -2,6 +2,9 @@ package com.example.peasinapod.Service;
 
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
+import com.example.peasinapod.Data.Adapter.ProfileAdapter;
+import com.example.peasinapod.Data.Adapter.GenericDTOAdapter;
+import com.example.peasinapod.Data.DTO.ProfileUserDTO;
 import com.example.peasinapod.Repository.ProfileRepository;
 import com.example.peasinapod.Security.JwtTokenUtil;
 //import com.example.peasinapod.Repository.CustomProfileRepository;
@@ -20,6 +23,12 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    @Autowired
+    private ProfileAdapter profileAdapter;
+
+    @Autowired
+    private GenericDTOAdapter<Profile, ProfileUserDTO> profileUserAdapter;
+
     // private CustomProfileRepository mockProfileRepository = new MockProfileRepository();
 
     public Profile saveProfile(Profile profile) {
@@ -33,13 +42,7 @@ public class ProfileService {
     public List<ProfileDTO> getAllProfiles() {
         List<Profile> profiles = profileRepository.findAll();
         return profiles.stream()
-                    .map(profile -> {
-                        ProfileDTO profileDTO = new ProfileDTO();
-                        profileDTO.setId(profile.getId());
-                        profileDTO.setNickname(profile.getNickname());
-                        profileDTO.setSummary(profile.getSummary());
-                        return profileDTO;
-                    })
+                    .map(profileAdapter::convertToDTO)
                     .collect(Collectors.toList());
     }
 
@@ -50,24 +53,29 @@ public class ProfileService {
     public ProfileDTO getProfileDTOById(Long id) {
         Profile profile = profileRepository.findById(id).orElse(null);
         if (profile != null) {
-            ProfileDTO profileDTO = new ProfileDTO();
-            profileDTO.setId(profile.getId());
-            profileDTO.setNickname(profile.getNickname());
-            profileDTO.setSummary(profile.getSummary());
-            return profileDTO;
+            return profileAdapter.convertToDTO(profile);
         } else {
             return null;
         }
     }
 
+    public Profile getProfileByUserId(Long userId) {
+        return profileRepository.findByUserId(userId).orElse(null);
+    }
+
     public ProfileDTO getProfileDTOByUserId(Long userId) {
         Profile profile = profileRepository.findByUserId(userId).orElse(null);
         if (profile != null) {
-            ProfileDTO profileDTO = new ProfileDTO();
-            profileDTO.setId(profile.getId());
-            profileDTO.setNickname(profile.getNickname());
-            profileDTO.setSummary(profile.getSummary());
-            return profileDTO;
+            return profileAdapter.convertToDTO(profile);
+        } else {
+            return null;
+        }
+    }
+
+    public ProfileUserDTO getProfileUserDTOByUserId(Long userId) {
+        Profile profile = profileRepository.findByUserId(userId).orElse(null);
+        if (profile != null) {
+            return profileUserAdapter.convertToDTO(profile);
         } else {
             return null;
         }
@@ -97,13 +105,7 @@ public class ProfileService {
     public List<ProfileDTO> getAllProfilesExceptUser(Long userId) {
         List<Profile> profiles = profileRepository.findAllProfilesExcept(userId);
         return profiles.stream()
-                    .map(profile -> {
-                        ProfileDTO profileDTO = new ProfileDTO();
-                        profileDTO.setId(profile.getId());
-                        profileDTO.setNickname(profile.getNickname());
-                        profileDTO.setSummary(profile.getSummary());
-                        return profileDTO;
-                    })
+                    .map(profileAdapter::convertToDTO)
                     .collect(Collectors.toList());
     }
 }

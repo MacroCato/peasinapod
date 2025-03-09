@@ -24,9 +24,9 @@ public class MatchController {
     private static final Logger logger = LoggerFactory.getLogger(MatchService.class);
 
     @GetMapping
-    public ResponseEntity<List<MatchResponse>> getMatchesByUser(@PathVariable Long userId) {
+    public ResponseEntity<List<Match>> getMatchesByUser(@PathVariable Long userId) {
         try {
-            List<MatchResponse> matches = matchService.getMatchesByUser(userId);
+            List<Match> matches = matchService.getMatchesByUser(userId);
             return new ResponseEntity<>(matches, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);

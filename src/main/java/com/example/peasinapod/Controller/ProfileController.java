@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
+import com.example.peasinapod.Data.DTO.ProfileUserDTO;
 import com.example.peasinapod.Service.ProfileService;
 import com.example.peasinapod.Security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,11 +47,11 @@ public class ProfileController {
     }
 
     @GetMapping("/profile")
-    public ResponseEntity<ProfileDTO> getProfile(HttpServletRequest request) {
+    public ResponseEntity<ProfileUserDTO> getProfile(HttpServletRequest request) {
         String token = request.getHeader("Authorization").substring(7); // Remove "Bearer " prefix
         Long userId = jwtTokenUtil.getUserIdFromToken(token);
-        ProfileDTO profile = profileService.getProfileDTOByUserId(userId);
-        return new ResponseEntity<>(profile, HttpStatus.OK);
+        ProfileUserDTO profileUserDTO = profileService.getProfileUserDTOByUserId(userId);
+        return new ResponseEntity<>(profileUserDTO, HttpStatus.OK);
     }
     
     // Get a specific user profile by ID
