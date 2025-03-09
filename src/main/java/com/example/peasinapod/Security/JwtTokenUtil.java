@@ -7,6 +7,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.beans.factory.annotation.Value;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.example.peasinapod.Service.TokenBlacklistService;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,6 +27,9 @@ public class JwtTokenUtil {
 
     @Value("${jwt.expiration}")
     private Long expiration;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
 
     public JwtTokenUtil() {
         try {
@@ -75,6 +80,10 @@ public class JwtTokenUtil {
 
     public boolean validateToken(String token) {
         logger.info("Validating token: {}", token);
+        if (tokenBlacklistService.isTokenBlacklisted(token)) {
+            logger.error("Token is blacklisted");
+            return false;
+        }
         try {
             Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
             logger.info("Token is valid");

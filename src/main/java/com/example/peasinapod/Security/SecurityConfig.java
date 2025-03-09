@@ -63,9 +63,9 @@ public class SecurityConfig {
                                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                )
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
+                // .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/likes/**").permitAll()
+                // .requestMatchers(HttpMethod.POST, "/api/likes/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
