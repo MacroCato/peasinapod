@@ -2,12 +2,19 @@ package com.example.peasinapod.Controller;
 
 import java.util.List;
 
-import com.example.peasinapod.Common.Profile;
+import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.DTO.ProfileDTO;
+import com.example.peasinapod.Data.DTO.ProfileUserDTO;
 import com.example.peasinapod.Service.ProfileService;
+import com.example.peasinapod.Security.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // This is the controller class for the Profile entity. This 
 // is the entry point for the clients via the REST API.
@@ -20,6 +27,11 @@ public class ProfileController {
     // Inject the ProfileService class
     @Autowired
     private ProfileService profileService;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     // Create a new user profile
     @PostMapping
@@ -34,13 +46,32 @@ public class ProfileController {
 
     // Get a list of all user profiles
     @GetMapping
-    public ResponseEntity<List<Profile>> getAllProfiles() {
-        List<Profile> profiles = profileService.getAllProfiles();
+    public ResponseEntity<List<ProfileDTO>> getAllProfiles() {
+        List<ProfileDTO> profiles = profileService.getAllProfiles();
         return new ResponseEntity<>(profiles, HttpStatus.OK);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<ProfileUserDTO> getProfile(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").substring(7); // Remove "Bearer " prefix
+        Long userId = jwtTokenUtil.getUserIdFromToken(token);
+        ProfileUserDTO profileUserDTO = profileService.getProfileUserDTOByUserId(userId);
+        return new ResponseEntity<>(profileUserDTO, HttpStatus.OK);
     }
     
     // Get a specific user profile by ID
     @GetMapping("/{id}")
+    public ResponseEntity<ProfileDTO> getProfileDTOById(@PathVariable Long id) {
+        ProfileDTO profileDTO = profileService.getProfileDTOById(id);
+        if (profileDTO != null) {
+            return new ResponseEntity<>(profileDTO, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Get a specific user profile by ID
+    @GetMapping("/user/{id}")
     public ResponseEntity<Profile> getProfileById(@PathVariable Long id) {
         Profile profile = profileService.getProfileById(id);
         if (profile != null) {
@@ -50,12 +81,25 @@ public class ProfileController {
         }
     }
 
+    // Get a list of all user profiles except the specified user
+    @GetMapping("/except/{userId}")
+    public ResponseEntity<List<ProfileDTO>> getAllProfilesExceptUser(@PathVariable Long userId) {
+        try {
+            List<ProfileDTO> profilesDTO = profileService.getAllProfilesExceptUser(userId);
+            return new ResponseEntity<>(profilesDTO, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     // Update an existing user profile
     @PutMapping("/{id}")
-    public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile updatedProfile) {
+    public ResponseEntity<ProfileUserDTO> updateProfile(@PathVariable Long id, @RequestBody ProfileUserDTO updatedProfile) {
         try {
-            Profile profile = profileService.updateProfile(id, updatedProfile);
-            return new ResponseEntity<>(profile, HttpStatus.OK);
+            logger.debug("ProfileController: Updating profile with ID: {}", id);
+            ProfileUserDTO profileUserDTO = profileService.updateProfile(id, updatedProfile);
+            logger.debug("ProfileController: Profile updated");
+            return new ResponseEntity<>(profileUserDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
