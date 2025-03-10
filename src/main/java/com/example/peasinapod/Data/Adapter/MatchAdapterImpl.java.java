@@ -16,7 +16,7 @@ public class MatchAdapterImpl implements GenericDTOAdapter<Profile, MatchRespons
         matchResponse.setSummary(profile.getSummary());
         matchResponse.setFirstName(profile.getFirstName());
         matchResponse.setSurname(profile.getSurname());
-        matchResponse.setEmail(profile.getEmail());
+        matchResponse.setEmail(profile.getUser().getEmail());
         return matchResponse;
     }
 }

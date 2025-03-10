@@ -9,5 +9,5 @@ import java.util.List;
 public class ProfileUserDTO extends ProfileDTO {
     private String firstName;
     private String surname;
-    private String email;
+    private Long userId;
 }

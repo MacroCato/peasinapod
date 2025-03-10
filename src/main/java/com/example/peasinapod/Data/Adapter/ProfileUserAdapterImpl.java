@@ -13,9 +13,9 @@ public class ProfileUserAdapterImpl implements GenericDTOAdapter<Profile, Profil
         profileUserDTO.setId(profile.getId());
         profileUserDTO.setFirstName(profile.getFirstName());
         profileUserDTO.setSurname(profile.getSurname());
-        profileUserDTO.setEmail(profile.getEmail());
         profileUserDTO.setNickname(profile.getNickname());
         profileUserDTO.setSummary(profile.getSummary());
+        profileUserDTO.setUserId(profile.getUser().getId());
         return profileUserDTO;
     }
 }

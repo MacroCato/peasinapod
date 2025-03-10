@@ -13,6 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // This is the controller class for the Profile entity. This 
 // is the entry point for the clients via the REST API.
 // It handles HTTP requests from clients and sends responses
@@ -27,6 +30,8 @@ public class ProfileController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileController.class);
 
     // Create a new user profile
     @PostMapping
@@ -89,10 +94,12 @@ public class ProfileController {
 
     // Update an existing user profile
     @PutMapping("/{id}")
-    public ResponseEntity<Profile> updateProfile(@PathVariable Long id, @RequestBody Profile updatedProfile) {
+    public ResponseEntity<ProfileUserDTO> updateProfile(@PathVariable Long id, @RequestBody ProfileUserDTO updatedProfile) {
         try {
-            Profile profile = profileService.updateProfile(id, updatedProfile);
-            return new ResponseEntity<>(profile, HttpStatus.OK);
+            logger.debug("ProfileController: Updating profile with ID: {}", id);
+            ProfileUserDTO profileUserDTO = profileService.updateProfile(id, updatedProfile);
+            logger.debug("ProfileController: Profile updated");
+            return new ResponseEntity<>(profileUserDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }

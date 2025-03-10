@@ -15,10 +15,10 @@ public class Match {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private User user;
+    @JoinColumn(name = "user_1_id", referencedColumnName = "id")
+    private User user1;
 
     @ManyToOne
-    @JoinColumn(name = "profile_id", referencedColumnName = "id")
-    private Profile profile;
+    @JoinColumn(name = "user_2_id", referencedColumnName = "id")
+    private User user2;
 }

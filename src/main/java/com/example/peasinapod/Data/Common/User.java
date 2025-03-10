@@ -13,8 +13,6 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String firstName;
-    private String surname;
 
     @Column(unique = true)
     private String email;

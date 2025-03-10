@@ -28,6 +28,7 @@ public class LikeController {
     @CrossOrigin
     public ResponseEntity<LikeDTO> likeProfile(@RequestBody LikeDTO likeDTO) {
         try {
+            logger.debug("LikeController: Attempting to like profile for userId: {} and profileId: {}", likeDTO.getUserId(), likeDTO.getProfileId());
   //          logger.debug("LikeController: Attempting to like profile with userId: {} and profileId: {}", LikeDTO.getUserId(), likeDTO.getProfileId());
             LikeDTO newlikeDTO = likeService.likeProfile(likeDTO.getUserId(), likeDTO.getProfileId());
             //LikeDTO newlikeDTO = likeAdapter.convertToDTO(like);
@@ -47,6 +48,18 @@ public class LikeController {
             return new ResponseEntity<>(likes, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             logger.error("LikeController: Error fetching likes for user - {}", e.getMessage());
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/likedBy/{userId}")
+    public ResponseEntity<List<ProfileDTO>> getUsersWhoLikedUser(@PathVariable Long userId) {
+        try {
+            logger.debug("LikeController: Fetching users who liked user. UserId: {}", userId);
+            List<ProfileDTO> usersWhoLiked = likeService.getUsersWhoLikedUser(userId);
+            return new ResponseEntity<>(usersWhoLiked, HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            logger.error("LikeController: Error fetching users who liked user - {}", e.getMessage());
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }

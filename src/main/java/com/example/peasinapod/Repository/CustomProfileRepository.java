@@ -7,5 +7,5 @@ import java.util.Optional;
 public interface CustomProfileRepository {
     List<Profile> getAll();
     Profile getById(Long profileId);
-    Optional<Profile> findByEmail(String email);
+    //Optional<Profile> findByEmail(String email);
 }

@@ -20,7 +20,6 @@ public class Profile {
     private String firstName;
     private String surname;
     private String nickname;
-    private String email;
     private String summary;
 
     @OneToOne
@@ -51,14 +50,6 @@ public class Profile {
         this.surname = Surname;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
     public String getNickname() {
         return nickname;
     }
@@ -73,6 +64,14 @@ public class Profile {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }

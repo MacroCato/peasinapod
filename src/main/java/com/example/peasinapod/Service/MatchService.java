@@ -30,7 +30,7 @@ public class MatchService {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchService.class);
 
-    public List<Match> getMatchesByUser(Long userId) {
+    public List<MatchResponse> getMatchesByUser(Long userId) {
         logger.debug("MatchService: Fetching matches for user. UserId: {}", userId);
 
         User user = userRepository.findById(userId).orElseThrow(() -> {
@@ -38,13 +38,23 @@ public class MatchService {
             return new IllegalArgumentException("User not found");
         });
 
-        return matchRepository.findByUser(user);
-        //return List<MatchResponse> matchResponses = new List<MatchResponse>();
-        // return matches.stream()
-        //             .map(match -> {
-        //                 Profile profile = match.getProfile();
-        //                 return matchAdapter.convertToDTO(profile);
-        //             })
-        //             .collect(Collectors.toList());
+        List<Match> matches = matchRepository.findByUser(user);
+        return matches.stream()
+                    .map(match -> {
+                        User otherUser = match.getUser1().equals(user) ? match.getUser2() : match.getUser1();
+                        Profile otherUserProfile = profileRepository.findByUserId(otherUser.getId()).orElseThrow(() -> {
+                            logger.error("MatchService: Profile not found. UserId: {}", otherUser.getId());
+                            return new IllegalArgumentException("Profile not found");
+                        });
+                        MatchResponse matchResponse = new MatchResponse();
+                        matchResponse.setId(otherUserProfile.getId());
+                        matchResponse.setFirstName(otherUserProfile.getFirstName());
+                        matchResponse.setSurname(otherUserProfile.getSurname());
+                        matchResponse.setEmail(otherUser.getEmail());
+                        matchResponse.setNickname(otherUserProfile.getNickname());
+                        matchResponse.setSummary(otherUserProfile.getSummary());
+                        return matchResponse;
+                    })
+                    .collect(Collectors.toList());
     }
 }

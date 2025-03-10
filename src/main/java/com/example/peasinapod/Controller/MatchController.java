@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/api/matches/{userId}")
+@RequestMapping("/api/matches")
 public class MatchController {
 
     @Autowired
@@ -23,12 +23,14 @@ public class MatchController {
 
     private static final Logger logger = LoggerFactory.getLogger(MatchService.class);
 
-    @GetMapping
-    public ResponseEntity<List<Match>> getMatchesByUser(@PathVariable Long userId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<MatchResponse>> getMatchesByUser(@PathVariable Long userId) {
         try {
-            List<Match> matches = matchService.getMatchesByUser(userId);
+            logger.debug("MatchController: Fetching matches for userId: {}", userId);
+            List<MatchResponse> matches = matchService.getMatchesByUser(userId);
             return new ResponseEntity<>(matches, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            logger.error("MatchController: Error fetching matches for userId: {}", userId, e);
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }

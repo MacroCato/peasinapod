@@ -1,6 +1,8 @@
 package com.example.peasinapod.Service;
 
 import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.Common.User;
+import com.example.peasinapod.Repository.UserRepository;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Data.Adapter.ProfileAdapter;
 import com.example.peasinapod.Data.Adapter.GenericDTOAdapter;
@@ -15,6 +17,9 @@ import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 // This is the service class (business logic) for the Profile entity
 // It contains methods for saving, retrieving and deleting Profile objects
 @Service
@@ -27,15 +32,16 @@ public class ProfileService {
     private ProfileAdapter profileAdapter;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private GenericDTOAdapter<Profile, ProfileUserDTO> profileUserAdapter;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProfileService.class);
 
     // private CustomProfileRepository mockProfileRepository = new MockProfileRepository();
 
     public Profile saveProfile(Profile profile) {
-        // Business logic: Ensure the email is unique
-        if (profileRepository.findByEmail(profile.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Email already exists");
-        }
         return profileRepository.save(profile);
     }
 
@@ -82,16 +88,21 @@ public class ProfileService {
     }
 
     // Update an existing profile
-    public Profile updateProfile(Long id, Profile updatedProfile) {
-        Optional<Profile> existingProfileOpt = profileRepository.findById(id);
+    public ProfileUserDTO updateProfile(Long id, ProfileUserDTO updatedProfile) {
+        logger.debug("ProfileService: Updating profile with ID: {}", updatedProfile.getId());
+        Optional<Profile> existingProfileOpt = profileRepository.findById(updatedProfile.getId());
+        logger.debug("ProfileService: Existing profile: {}", existingProfileOpt);
         if (existingProfileOpt.isPresent()) {
+            logger.debug("ProfileService: Profile found. Updating profile");
             Profile existingProfile = existingProfileOpt.get();
             existingProfile.setFirstName(updatedProfile.getFirstName());
             existingProfile.setSurname(updatedProfile.getSurname());
-            existingProfile.setEmail(updatedProfile.getEmail());
             existingProfile.setNickname(updatedProfile.getNickname());
             existingProfile.setSummary(updatedProfile.getSummary());
-            return profileRepository.save(existingProfile);
+            // Profile savedProfile = profileRepository.save(existingProfile);
+            // ProfileUserDTO profileUserDTO = profileUserAdapter.convertToDTO(savedProfile);
+            // return profileUserDTO;
+            return profileUserAdapter.convertToDTO(profileRepository.save(existingProfile));
         } else {
             throw new IllegalArgumentException("Profile not found");
         }
@@ -103,7 +114,13 @@ public class ProfileService {
     }
 
     public List<ProfileDTO> getAllProfilesExceptUser(Long userId) {
-        List<Profile> profiles = profileRepository.findAllProfilesExcept(userId);
+        logger.debug("ProfileService: Fetching all profiles except for userId: {}", userId);
+        
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            logger.error("ProfileService: User not found. UserId: {}", userId);
+            return new IllegalArgumentException("User not found");
+        });
+        List<Profile> profiles = profileRepository.findAllProfilesExcept(user);
         return profiles.stream()
                     .map(profileAdapter::convertToDTO)
                     .collect(Collectors.toList());
