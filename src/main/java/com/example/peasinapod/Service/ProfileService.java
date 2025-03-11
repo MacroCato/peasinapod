@@ -4,6 +4,7 @@ import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.UserRepository;
 import com.example.peasinapod.Repository.LikeRepository;
+import com.example.peasinapod.Repository.MatchRepository;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Data.Adapter.ProfileAdapter;
 import com.example.peasinapod.Data.Adapter.GenericDTOAdapter;
@@ -38,6 +39,9 @@ public class ProfileService {
 
     @Autowired
     private LikeRepository likeRepository;
+
+    @Autowired
+    private MatchRepository matchRepository;
 
     @Autowired
     private GenericDTOAdapter<Profile, ProfileUserDTO> profileUserAdapter;
@@ -134,11 +138,28 @@ public class ProfileService {
                 .map(like -> like.getProfile().getId())
                 .collect(Collectors.toSet());
 
+        // Get the profiles that have a match with the user
+        Set<Long> matchedProfileIds = matchRepository.findByUser1OrUser2(user, user).stream()
+                .map(match -> {
+                    if (match.getUser1().equals(user)) {
+                        return profileRepository.findByUserId(match.getUser2().getId()).orElseThrow(() -> {
+                            logger.error("ProfileService: Profile not found. UserId: {}", match.getUser2().getId());
+                            return new IllegalArgumentException("Profile not found");
+                        }).getId();
+                    } else {
+                        return profileRepository.findByUserId(match.getUser1().getId()).orElseThrow(() -> {
+                            logger.error("ProfileService: Profile not found for user. UserId: {}", match.getUser1().getId());
+                            return new IllegalArgumentException("Profile not found for user");
+                        }).getId();
+                    }
+                })
+                .collect(Collectors.toSet());
+
         // Filter out the profiles that the user has already liked
         // and convert the profiles to DTOs
         logger.debug("ProfileService: Filtering profiles");
         List<ProfileDTO> filteredProfiles = profiles.stream()
-                .filter(profile -> !likedProfileIds.contains(profile.getId()))
+                .filter(profile -> !likedProfileIds.contains(profile.getId()) && !matchedProfileIds.contains(profile.getId()))
                 .map(profileAdapter::convertToDTO)
                 .collect(Collectors.toList());
 
