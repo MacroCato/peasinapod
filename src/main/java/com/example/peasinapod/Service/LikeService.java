@@ -80,18 +80,23 @@ public class LikeService {
                 match.setUser2(profile.getUser());
                 matchRepository.save(match);
                 logger.info("LikeService: Match created. UserId: {}, ProfileId: {}", userId, profileId);
+                // Remove the reciprocal likes
+                likeRepository.delete(reciprocalLike.get());
+                logger.info("LikeService: Reciprocal like removed. UserId: {}, ProfileId: {}", likedUser.getId(), currentUserProfile.getId());
+            } else {
+                logger.info("LikeService: Reciprocal like not found. UserId: {}, ProfileId: {}", likedUser.getId(), currentUserProfile.getId());
+                Like like = new Like();
+                like.setUser(user);
+                like.setProfile(profile);
+
+                Like savedLike = likeRepository.save(like);
+                logger.info("LikeService: Profile liked. LikeId: {}", savedLike.getId());
+
+                LikeDTO savedLikeDTO = likeAdapter.convertToDTO(savedLike);
+                return savedLikeDTO;
             }
-
-            Like like = new Like();
-            like.setUser(user);
-            like.setProfile(profile);
-
-            Like savedLike = likeRepository.save(like);
-            logger.info("LikeService: Profile liked. LikeId: {}", savedLike.getId());
-
-            LikeDTO savedLikeDTO = likeAdapter.convertToDTO(savedLike);
-        return savedLikeDTO;
         }
+        return null;
     }
 
     public void unlikeProfile(Long userId, Long profileId) {
@@ -107,22 +112,40 @@ public class LikeService {
             return new IllegalArgumentException("Profile not found");
         });
 
-        Optional<Like> existingLike = likeRepository.findByUserIdAndProfileId(userId, profileId);
+        Optional<Match> existingMatch = matchRepository.findByUser1AndUser2(user, profile.getUser());
+        if (existingMatch.isPresent()) {
+            matchRepository.delete(existingMatch.get());
+            logger.info("LikeService: Match deleted. User1Id: {}, User2Id: {}", user.getId(), profile.getUser().getId());
 
-        if (existingLike.isPresent()) {
-            likeRepository.delete(existingLike.get());
-            logger.info("LikeService: Profile unliked. UserId: {}, ProfileId: {}", userId, profileId);
-
-            Optional<Match> existingMatch = matchRepository.findByUser1AndUser2(user, profile.getUser());
-            if (existingMatch.isPresent()) {
-                matchRepository.delete(existingMatch.get());
-                logger.info("LikeService: Match deleted. User1Id: {}, User2Id: {}", user.getId(), profile.getUser().getId());
-            }
+            // Add the remaining user's like back into the likes table
+            Like like = new Like();
+            like.setUser(profile.getUser());
+            like.setProfile(profileRepository.findByUserId(user.getId()).orElseThrow(() -> {
+                logger.error("LikeService: Profile not found for user. UserId: {}", user.getId());
+                return new IllegalArgumentException("Profile not found for user");
+            }));
+            likeRepository.save(like);
+            logger.info("LikeService: Like added back for remaining user. UserId: {}, ProfileId: {}", profile.getUser().getId(), user.getId());
         } else {
-            logger.error("LikeService: Like not found. UserId: {}, ProfileId: {}", userId, profileId);
-            throw new IllegalArgumentException("Like not found");
+
+            Optional<Like> existingLike = likeRepository.findByUserIdAndProfileId(userId, profileId);
+
+            if (existingLike.isPresent()) {
+                likeRepository.delete(existingLike.get());
+                logger.info("LikeService: Profile unliked. UserId: {}, ProfileId: {}", userId, profileId);
+
+            // Optional<Match> existingMatch = matchRepository.findByUser1AndUser2(user, profile.getUser());
+            // if (existingMatch.isPresent()) {
+            //     matchRepository.delete(existingMatch.get());
+            //     logger.info("LikeService: Match deleted. User1Id: {}, User2Id: {}", user.getId(), profile.getUser().getId());
+            // }
+            } else {
+                logger.error("LikeService: Like not found. UserId: {}, ProfileId: {}", userId, profileId);
+                throw new IllegalArgumentException("Like not found");
+            }
         }
     }
+
 
     public List<ProfileDTO> getLikesByUser(Long userId) {
         logger.debug("LikeService: Fetching likes for user. UserId: {}", userId);

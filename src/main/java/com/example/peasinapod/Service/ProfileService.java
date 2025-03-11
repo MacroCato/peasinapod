@@ -3,6 +3,7 @@ package com.example.peasinapod.Service;
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.Common.User;
 import com.example.peasinapod.Repository.UserRepository;
+import com.example.peasinapod.Repository.LikeRepository;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Data.Adapter.ProfileAdapter;
 import com.example.peasinapod.Data.Adapter.GenericDTOAdapter;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +35,9 @@ public class ProfileService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private LikeRepository likeRepository;
 
     @Autowired
     private GenericDTOAdapter<Profile, ProfileUserDTO> profileUserAdapter;
@@ -121,8 +126,22 @@ public class ProfileService {
             return new IllegalArgumentException("User not found");
         });
         List<Profile> profiles = profileRepository.findAllProfilesExcept(user);
-        return profiles.stream()
-                    .map(profileAdapter::convertToDTO)
-                    .collect(Collectors.toList());
+        
+        // Get the profiles that the user has already liked and
+        // convert them to a set for faster lookup
+        logger.debug("ProfileService: Fetching liked profiles for user. UserId: {}", userId);
+        Set<Long> likedProfileIds = likeRepository.findByUser(user).stream() 
+                .map(like -> like.getProfile().getId())
+                .collect(Collectors.toSet());
+
+        // Filter out the profiles that the user has already liked
+        // and convert the profiles to DTOs
+        logger.debug("ProfileService: Filtering profiles");
+        List<ProfileDTO> filteredProfiles = profiles.stream()
+                .filter(profile -> !likedProfileIds.contains(profile.getId()))
+                .map(profileAdapter::convertToDTO)
+                .collect(Collectors.toList());
+
+        return filteredProfiles;
     }
 }

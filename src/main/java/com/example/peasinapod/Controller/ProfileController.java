@@ -85,9 +85,12 @@ public class ProfileController {
     @GetMapping("/except/{userId}")
     public ResponseEntity<List<ProfileDTO>> getAllProfilesExceptUser(@PathVariable Long userId) {
         try {
+            logger.debug("ProfileController: Getting all profiles except user's with ID: {}", userId);
             List<ProfileDTO> profilesDTO = profileService.getAllProfilesExceptUser(userId);
+            logger.debug("ProfileController: Profiles retrieved");
             return new ResponseEntity<>(profilesDTO, HttpStatus.OK);
         } catch (IllegalArgumentException e) {
+            logger.error("ProfileController: User not found");
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
