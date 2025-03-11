@@ -93,6 +93,7 @@ public class AuthenticationController {
         // create user object
         User user = new User();
         user.setEmail(signupRequest.getEmail());
+        // encode password and set it to user object
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
 
         User savedUser = userRepository.save(user);

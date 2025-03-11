@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class ProfileRepositoryTest {
@@ -17,10 +17,17 @@ public class ProfileRepositoryTest {
     private ProfileRepository profileRepository;
 
     @Test
-    public void testFindById() {
+    public void testFindByExistingId() {
         Long profileId = 1L;
         Optional<Profile> profile = profileRepository.findById(profileId);
         assertTrue(profile.isPresent(), "Profile should be found");
+    }
+
+    @Test
+    public void testFindByNonExistingId() {
+        Long profileId = 1000L;
+        Optional<Profile> profile = profileRepository.findById(profileId);
+        assertFalse(profile.isPresent(), "Profile should not be found");
     }
 
     // @Test
