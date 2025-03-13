@@ -31,6 +31,10 @@ public class ProfileService {
     @Autowired
     private ProfileRepository profileRepository;
 
+    public void setProfileRepository(ProfileRepository profileRepository) {
+        this.profileRepository = profileRepository;
+    }
+
     @Autowired
     private ProfileAdapter profileAdapter;
 
