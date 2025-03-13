@@ -1,0 +1,24 @@
+name: FamousQuotes build
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build the project
+      run: sh gradlew build
+    
+    - name: Generate the static site
+      run: sh gradlew run
