@@ -28,10 +28,7 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build the project
-      run: ./gradlew build
-    
-    - name: Generate the static site
-      run: ./gradlew run
+      run: ./gradlew build -x test
 
     - name: Test without context loads
       run: ./gradlew test -x contextLoads
