@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class PeasinapodApplicationTests {
 
-	@Test
-	@Disabled
-	void contextLoads() {
-	}
+//	@Test
+//	@Disabled
+//	void contextLoads() {
+//	}
 
 }
