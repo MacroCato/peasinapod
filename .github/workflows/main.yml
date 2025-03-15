@@ -31,4 +31,4 @@ jobs:
       run: ./gradlew build -x test
 
     - name: Test without context loads
-      run: ./gradlew test --tests '* -Dtest=com.example.peasinapod.PeasinapodApplicationTests'
+      run: ./gradlew test
