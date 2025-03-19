@@ -102,6 +102,7 @@ public class AuthenticationService {
         // Set the nickname to be the First Name to start with. 
         // The user can change afterwards.
         profile.setNickname(signupRequest.getFirstName());
+        profile.setUser(savedUser);
 
         profileRepository.save(profile);
 
