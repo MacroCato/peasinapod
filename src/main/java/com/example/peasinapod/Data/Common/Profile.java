@@ -7,6 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.CollectionTable;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
+import java.util.List;
+import java.util.Set;
+
 
 import lombok.*;
 
@@ -21,6 +30,15 @@ public class Profile {
     private String surname;
     private String nickname;
     private String summary;
+
+    private Integer distance;
+    private String gender;
+
+    @ElementCollection(targetClass = ProgrammingLanguages.class)
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "programming_languages", joinColumns = @JoinColumn(name = "profile_id"))
+    @Column(name = "language")
+    private Set<ProgrammingLanguages> programmingLanguages;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -72,6 +90,30 @@ public class Profile {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Integer getDistance() {
+        return distance;
+    }
+
+    public void setDistance(Integer distance) {
+        this.distance = distance;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Set<ProgrammingLanguages> getLanguages() {
+        return programmingLanguages;
+    }
+    
+    public void setLanguages(Set<ProgrammingLanguages> languages) {
+        this.programmingLanguages = languages; 
     }
 
 }

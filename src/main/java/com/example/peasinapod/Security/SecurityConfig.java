@@ -65,6 +65,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
+                //.requestMatchers(HttpMethod.GET, "/api/profiles/search").permitAll()
+                //.requestMatchers(HttpMethod.GET, "/api/profiles/search/*").permitAll()
                 // .requestMatchers(HttpMethod.POST, "/api/likes/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -82,6 +84,8 @@ public class SecurityConfig {
         configuration.setAllowCredentials(true);
         configuration.addAllowedOrigin("http://localhost:3000"); 
         configuration.addAllowedHeader("*");
+        //configuration.addAllowedHeader("Content-Type");
+        //configuration.addAllowedHeader("Authorization");
         configuration.addAllowedMethod(HttpMethod.GET.name());
         configuration.addAllowedMethod(HttpMethod.POST.name());
         configuration.addAllowedMethod(HttpMethod.PUT.name());
