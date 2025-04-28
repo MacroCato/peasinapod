@@ -34,23 +34,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        logger.info("Authorization request received");
+        logger.info("JwtAuthenticationFilter: Authorization request received");
         String header = request.getHeader("Authorization");
+        logger.info("JwtAuthenticationFilter: Header retrieved: {}", header);
         String token = null;
         String email = null;
 
         if (header != null && header.startsWith("Bearer ")) {
+            logger.info("JwtAuthenticationFilter: Extracting data from header");
             token = header.substring(7);
+            logger.info("JwtAuthenticationFilter: Extracted token: {}", token);
             email = jwtTokenUtil.getEmailFromToken(token);
+            logger.info("JwtAuthenticationFilter: Extracted email: {}", email);
         }
 
         if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            logger.info("Getting user by email: {}", email);
+            logger.info("JwtAuthenticationFilter: Getting user by email: {}", email);
             UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            logger.info("User details loaded: {}", userDetails);
+            logger.info("JwtAuthenticationFilter: User details loaded: {}", userDetails);
             if (jwtTokenUtil.validateToken(token)) {
-                logger.info("Token is valid");
+                logger.info("JwtAuthenticationFilter: Token is valid");
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

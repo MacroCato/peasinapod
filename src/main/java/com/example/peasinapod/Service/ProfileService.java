@@ -2,6 +2,7 @@ package com.example.peasinapod.Service;
 
 import com.example.peasinapod.Data.Common.Profile;
 import com.example.peasinapod.Data.Common.User;
+import com.example.peasinapod.Data.Common.ProgrammingLanguages;
 import com.example.peasinapod.Repository.UserRepository;
 import com.example.peasinapod.Repository.LikeRepository;
 import com.example.peasinapod.Repository.MatchRepository;
@@ -168,5 +169,29 @@ public class ProfileService {
                 .collect(Collectors.toList());
 
         return filteredProfiles;
+    }
+
+    public List<ProfileDTO> searchProfiles(String gender, Integer distance, List<String> languages) {
+        List<ProgrammingLanguages> programmingLanguages = null;
+        List<Profile> profiles = null;
+        if (languages != null && !languages.isEmpty()) {
+            try {
+                programmingLanguages = languages.stream()
+                    .map(lang -> ProgrammingLanguages.valueOf(lang.toUpperCase()))
+                    .toList();
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Invalid programming language: " + e.getMessage());
+            }
+            profiles = profileRepository.searchProfilesLang(gender, distance, programmingLanguages);
+        }
+        else if (gender != null && !gender.isEmpty()) {
+            profiles = profileRepository.searchProfiles(gender, distance);
+        }
+        else {
+            profiles = profileRepository.searchProfiles(distance);
+        }
+        return profiles.stream()
+                .map(profileAdapter::convertToDTO)
+                .collect(Collectors.toList());
     }
 }

@@ -3,6 +3,7 @@ package com.example.peasinapod.Controller;
 import java.util.List;
 
 import com.example.peasinapod.Data.Common.Profile;
+import com.example.peasinapod.Data.Common.ProgrammingLanguages;
 import com.example.peasinapod.Data.DTO.ProfileDTO;
 import com.example.peasinapod.Data.DTO.ProfileUserDTO;
 import com.example.peasinapod.Service.ProfileService;
@@ -116,6 +117,59 @@ public class ProfileController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchProfiles(
+            @RequestParam(required = false) String gender,
+            @RequestParam(required = false) Integer distance,
+            @RequestParam(required = false) List<String> languages) {
+        try {
+            logger.debug("ProfileController: gender received: {}", gender);
+            logger.debug("ProfileController: distance received: {}", distance);
+            logger.debug("ProfileController: languages received: {}", languages);
+            // Validate gender
+            if (gender != null && !gender.isEmpty() && !List.of("male", "female", "other").contains(gender.toLowerCase())) {
+            return new ResponseEntity<>("Invalid gender provided", HttpStatus.BAD_REQUEST);
+            }
+
+            // Validate distance
+            if (distance != null && distance < 0) {
+                return new ResponseEntity<>("Distance must be a positive number", HttpStatus.BAD_REQUEST);
+            }
+
+            // Validate languages
+            List<ProgrammingLanguages> programmingLanguages = null;
+            if (languages != null && !languages.isEmpty()) {
+                try {
+                    programmingLanguages = languages.stream()
+                            .filter(lang -> !lang.isBlank())
+                            .map(lang -> ProgrammingLanguages.valueOf(lang.toUpperCase()))
+                            .toList();
+                } catch (IllegalArgumentException e) {
+                    return new ResponseEntity<>("One or more invalid programming languages provided", HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            // Delegate to the service layer
+            List<ProfileDTO> profiles = profileService.searchProfiles(gender, distance, languages);
+            return new ResponseEntity<>(profiles, HttpStatus.OK);
+        
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/search/{distance}")
+    public ResponseEntity<?> searchProfiles(@PathVariable Integer distance) {
+        try {
+            String gender = null;
+            List<String> languages = null;
+            List<ProfileDTO> profiles = profileService.searchProfiles(gender, distance, languages);
+            return new ResponseEntity<>(profiles, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

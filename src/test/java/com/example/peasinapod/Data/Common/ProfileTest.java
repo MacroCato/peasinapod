@@ -1,4 +1,5 @@
 package com.example.peasinapod.Data.Common;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,9 @@ public class ProfileTest {
         profile.setNickname("Joey");
         profile.setSummary("A brief summary");
         profile.setUser(user);
+        profile.setDistance(20);
+        profile.setGender("male");
+        profile.setLanguages(Set.of(ProgrammingLanguages.JAVA, ProgrammingLanguages.C_PLUS_PLUS));
     }
 
     @Test
@@ -92,6 +96,40 @@ public class ProfileTest {
         newUser.setEmail("password123");
         profile.setUser(newUser);
         assertEquals(newUser, profile.getUser());
+    }
+
+    @Test
+    public void testGetDistance() {
+        assertEquals(20, profile.getDistance());
+    }
+
+    @Test
+    public void testSetDistance() {
+        profile.setDistance(10);
+        assertEquals(10, profile.getDistance());
+    }
+
+    @Test
+    public void testGetGender() {
+        assertEquals("male", profile.getGender());
+    }
+
+    @Test
+    public void testSetGender() {
+        profile.setGender("female");
+        assertEquals("female", profile.getGender());
+    }
+
+    @Test
+    public void testGetLanguages() {
+        assertEquals(Set.of(ProgrammingLanguages.JAVA, ProgrammingLanguages.C_PLUS_PLUS), profile.getLanguages());
+    }
+
+    @Test
+    public void testSetLanguages() {
+        Set<ProgrammingLanguages> newLanguages = Set.of(ProgrammingLanguages.JAVA, ProgrammingLanguages.C_PLUS_PLUS);
+        profile.setLanguages(newLanguages);
+        assertEquals(newLanguages, profile.getLanguages());
     }
     
 }
