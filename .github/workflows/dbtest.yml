@@ -47,7 +47,7 @@ jobs:
 
       - name: Verify MySQL Service
         run: |
-          docker exec mysql-db mysql -hmysql-db -P3306 -upodadmin -pp0dpassw0rd -e "SHOW DATABASES;"
+          docker exec mysql-db mysql -h127.0.0.1 -P3306 -upodadmin -pp0dpassw0rd -e "SHOW DATABASES;"
 
       - name: Run tests
         run: |
