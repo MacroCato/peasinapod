@@ -1,55 +1,55 @@
-name: CI with MySQL
+# name: CI with MySQL
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+# jobs:
+#   test:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Debug uname values
-        run: |
-          uname -s
-          uname -m
+#       - name: Debug uname values
+#         run: |
+#           uname -s
+#           uname -m
 
-      - name: Install Docker Compose
-        run: |
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.35.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
-          if ! [[ $(cat /usr/local/bin/docker-compose) =~ "docker-compose" ]]; then
-            echo "Download failed or invalid file. Exiting."
-            exit 1
-          fi
-          sudo chmod +x /usr/local/bin/docker-compose
-          docker-compose --version
+#       - name: Install Docker Compose
+#         run: |
+#           sudo curl -L "https://github.com/docker/compose/releases/download/v2.35.1/docker-compose-linux-x86_64" -o /usr/local/bin/docker-compose
+#           if ! [[ $(cat /usr/local/bin/docker-compose) =~ "docker-compose" ]]; then
+#             echo "Download failed or invalid file. Exiting."
+#             exit 1
+#           fi
+#           sudo chmod +x /usr/local/bin/docker-compose
+#           docker-compose --version
 
-      - name: Set up Docker Compose
-        run: |
-          docker-compose up -d
-          docker-compose ps
+#       - name: Set up Docker Compose
+#         run: |
+#           docker-compose up -d
+#           docker-compose ps
 
-      - name: Wait for MySQL to Start
-        run: |
-          for i in {1..10}; do
-            if docker exec mysql-db mysqladmin -upodadmin -pp0dpassw0rd ping --silent; then
-              echo "MySQL is ready!";
-              break;
-            fi
-            echo "Waiting for MySQL to start...";
-            sleep 5;
-          done
+#       - name: Wait for MySQL to Start
+#         run: |
+#           for i in {1..10}; do
+#             if docker exec mysql-db mysqladmin -upodadmin -pp0dpassw0rd ping --silent; then
+#               echo "MySQL is ready!";
+#               break;
+#             fi
+#             echo "Waiting for MySQL to start...";
+#             sleep 5;
+#           done
 
-      - name: Verify MySQL Service
-        run: |
-          docker exec mysql-db mysql -h127.0.0.1 -P3306 -upodadmin -pp0dpassw0rd -e "SHOW DATABASES;"
+#       - name: Verify MySQL Service
+#         run: |
+#           docker exec mysql-db mysql -h127.0.0.1 -P3306 -upodadmin -pp0dpassw0rd -e "SHOW DATABASES;"
 
-      - name: Run tests
-        run: |
-          # Add your test commands here
-          echo "Tests completed"
+#       - name: Run tests
+#         run: |
+#           # Add your test commands here
+#           echo "Tests completed"
