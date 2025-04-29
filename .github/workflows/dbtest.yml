@@ -14,9 +14,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug uname values
+        run: |
+          uname -s
+          uname -m
+
       - name: Install Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/2.35.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          if ! [[ $(cat /usr/local/bin/docker-compose) =~ "docker-compose" ]]; then
+            echo "Download failed or invalid file. Exiting."
+            exit 1
+          fi
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
