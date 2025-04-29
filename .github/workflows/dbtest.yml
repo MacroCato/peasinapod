@@ -29,14 +29,25 @@ jobs:
           sudo chmod +x /usr/local/bin/docker-compose
           docker-compose --version
 
-      - name: Set up Docker Compose
+          - name: Set up Docker Compose
+          run: |
+            docker-compose up -d
+            docker-compose ps
+        
+      - name: Wait for MySQL to Start
         run: |
-          docker-compose up -d
-          docker-compose ps
-
-      - name: Verify MySQL service
+          for i in {1..10}; do
+            if docker exec mysql-db mysqladmin -uuser -ppassword ping --silent; then
+              echo "MySQL is ready!";
+              break;
+            fi
+            echo "Waiting for MySQL to start...";
+            sleep 5;
+          done
+        
+      - name: Verify MySQL Service
         run: |
-          docker exec mysql-db mysql -uuser -ppassword -e "SHOW DATABASES;"
+          docker exec mysql-db mysql -h127.0.0.1 -P3306 -upodadmin -pp0dpassw0rd -e "SHOW DATABASES;"
           
       - name: Run tests
         run: |
