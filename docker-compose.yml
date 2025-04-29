@@ -6,8 +6,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: peasinapod
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
+      MYSQL_USER: podadmin
+      MYSQL_PASSWORD: p0dpassw0rd
     ports:
       - "3306:3306"
     volumes:
