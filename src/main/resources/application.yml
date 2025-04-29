@@ -1,0 +1,53 @@
+jwt:
+  secret: your_jwt_secret_key
+  expiration: 86400000
+logging:
+  level:
+    com:
+      example:
+        peasinapod: DEBUG
+
+spring:
+  application:
+    name: peasinapod
+  profiles:
+    active: local  # Default profile when no profile is explicitly set
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    url: jdbc:mysql://localhost:3306/peasinapod
+    username: podadmin
+    password: p0dpassw0rd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: ci
+  datasource:
+    url: jdbc:mysql://mysql:3306/peasinapod
+    username: podadmin
+    password: p0dpassw0rd
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
