@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment: deployment
     permissions:
       contents: read
       pages: write
@@ -29,7 +30,11 @@ jobs:
       run: chmod +x gradlew
 
     - name: Build the project
+      env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}  # Pass the environment variable
       run: ./gradlew build -x test
 
     - name: Test without context loads
+      env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}  # Pass the environment variable
       run: ./gradlew test
