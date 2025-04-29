@@ -1,0 +1,29 @@
+name: CI with MySQL
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        run: |
+          docker-compose up -d
+          docker-compose ps
+
+      - name: Verify MySQL service
+        run: |
+          docker exec mysql-db mysql -uuser -ppassword -e "SHOW DATABASES;"
+          
+      - name: Run tests
+        run: |
+          # Add your test commands here
+          echo "Tests completed"
